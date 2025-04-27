@@ -14,12 +14,12 @@ type JWT struct {
 }
 
 var (
-	TokenValid            = errors.New("未知错误")
-	TokenExpired          = errors.New("token已过期")
-	TokenNotValidYet      = errors.New("token尚未激活")
-	TokenMalformed        = errors.New("这不是一个token")
-	TokenSignatureInvalid = errors.New("无效签名")
-	TokenInvalid          = errors.New("无法处理此token")
+	ErrTokenValid            = errors.New("未知错误")
+	ErrTokenExpired          = errors.New("token已过期")
+	ErrTokenNotValidYet      = errors.New("token尚未激活")
+	ErrTokenMalformed        = errors.New("这不是一个token")
+	ErrTokenSignatureInvalid = errors.New("无效签名")
+	ErrTokenInvalid          = errors.New("无法处理此token")
 )
 
 func NewJWT() *JWT {
@@ -67,15 +67,15 @@ func (j *JWT) ParseToken(tokenString string) (*request.CustomClaims, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, jwt.ErrTokenExpired):
-			return nil, TokenExpired
+			return nil, ErrTokenExpired
 		case errors.Is(err, jwt.ErrTokenMalformed):
-			return nil, TokenMalformed
+			return nil, ErrTokenMalformed
 		case errors.Is(err, jwt.ErrTokenSignatureInvalid):
-			return nil, TokenSignatureInvalid
+			return nil, ErrTokenSignatureInvalid
 		case errors.Is(err, jwt.ErrTokenNotValidYet):
-			return nil, TokenNotValidYet
+			return nil, ErrTokenNotValidYet
 		default:
-			return nil, TokenInvalid
+			return nil, ErrTokenInvalid
 		}
 	}
 	if token != nil {
@@ -83,5 +83,5 @@ func (j *JWT) ParseToken(tokenString string) (*request.CustomClaims, error) {
 			return claims, nil
 		}
 	}
-	return nil, TokenValid
+	return nil, ErrTokenValid
 }
